@@ -8,16 +8,16 @@
 #include <map>
 using namespace std;
 
-struct letter_only : std::ctype<char> //this structure filters out any non alphabetical characters when analysing word frequency
+struct letter_only : ctype<char> //this structure filters out any non alphabetical characters when analysing word frequency
 {
-	letter_only() : std::ctype<char>(get_table()) {}
+	letter_only() : ctype<char>(get_table()) {}
 
-	static std::ctype_base::mask const* get_table()
+	static ctype_base::mask const* get_table()
 	{
-		static std::vector<std::ctype_base::mask>
-			rc(std::ctype<char>::table_size, std::ctype_base::space);
+		static vector<ctype_base::mask>
+			rc(ctype<char>::table_size, ctype_base::space);
 
-		std::fill(&rc['A'], &rc['z' + 1], std::ctype_base::alpha);
+		fill(&rc['A'], &rc['z' + 1], ctype_base::alpha);
 		return &rc[0];
 	}
 };
@@ -33,7 +33,6 @@ int main()
 	int numberOfSentences{}; //int for storing the number of sentences in the .txt
 	int count{}; //int for storing the frequency of words in the .txt
 	vector <string> unsortedList; //vector for holding the text file
-	vector <string> wordList; //stores object pair
 
 	while (getline(ReadFile, textFile)) { //reads the file line by line and adds it to a vector
 
@@ -63,26 +62,24 @@ int main()
 		}
 	}
 
-	map<string, int> wordCount;
-	ifstream input;
-	input.imbue(locale(locale(), new letter_only())); //enable reading only letters!
-	input.open(filename);
-	string word;
-	while (input >> word)
-	{
-		++wordCount[word];
-	}
-	for (map<string, int>::iterator it = wordCount.begin(); it != wordCount.end(); ++it)
-	{
-		cout << "\n" << it->first << " : " << it->second << endl;
-	}
-
-
 	cout << ("\nNumber of sentences:\t ");
 	cout << numberOfSentences;
 	cout << ("\nNumber of words:\t ");
-	cout << numberOfWords;
+	cout << numberOfWords << "\n";
 
+	map<string, int> wordList; //creates the map wordlist which stores strings and ints
+	ifstream input;
+	input.imbue(locale(locale(), new letter_only())); //enable reading only letters
+	input.open(filename); 
+	string word; //opens the file and reads it to the string word
+	while (input >> word)
+	{
+		++wordList[word]; //increments the counter
+	}
+	for (map<string, int>::iterator it = wordList.begin(); it != wordList.end(); ++it)
+	{
+		cout << it->first << " : " << it->second << endl; //prints the map
+	}
 }
 
 
